@@ -2,8 +2,12 @@ package main
 
 import (
 	"fmt"
+	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/mongo"
 	"goMongoService/database"
+	"goMongoService/handlers"
+	"log"
+	"net/http"
 	"time"
 )
 
@@ -21,4 +25,17 @@ func main()  {
 			break
 		}
 	}
+
+	//Init Router
+	r := mux.NewRouter()
+
+	// arrange our route
+	r.HandleFunc("/api/books", handlers.GetBooks).Methods("GET")
+	r.HandleFunc("/api/books/{id}", handlers.GetBook).Methods("GET")
+	r.HandleFunc("/api/books", handlers.CreateBook).Methods("POST")
+	r.HandleFunc("/api/books/{id}", handlers.UpdateBook).Methods("PUT")
+	r.HandleFunc("/api/books/{id}", handlers.DeleteBook).Methods("DELETE")
+
+	// set our port address
+	log.Fatal(http.ListenAndServe(":8000", r))
 }
